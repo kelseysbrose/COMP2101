@@ -7,3 +7,7 @@ function errormessage() {
     echo "[$timestamp] $error_message" >> /var/log/systeminfo.log
     echo "$error_message" >&2
 }
+function cpureport() {
+cat <<EOF
+CPU Info
+------------
