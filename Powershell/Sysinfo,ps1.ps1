@@ -1,5 +1,7 @@
 #First, Need to gather the information for the table, Hardware Info: 
 
+function get-system {
+
 $ComputerHardware = Get-CIMInstance -Classname win32_Computersystem 
 
 #Next, Need to display the information in user friendly table
@@ -31,10 +33,14 @@ $OperatingSystem = Get-CIMInstance -Classname Win32_OperatingSystem | Select-Obj
 Write-Host "Operating System Information"
 $OperatingSystem |Format-Table -Autosize
 
+}
 
+get-system
 
 
 # Then you want to get the Processor Information: 
+
+function get-processor {
 
 $Processor = Get-CimInstance -ClassName win32_processor | Select-Object -Property Description,MaxClockSpeed,NumberOfCores,L1CacheSpeed,L2CacheSpeed,L3CacheSpeed
 
@@ -50,8 +56,13 @@ $Processor | ForEach-Object {
     }
 }
 
+}
+
+get-processor
 
 # For the Disk Drives 
+
+function get-disks {
 
 Write-Host "Disk Drive Information" 
 
@@ -82,8 +93,14 @@ $diskInfoList = @()
 
 $diskinfolist
 
+}
+
+get-disks
+
 
 ## Now it's the RAM's turn 
+
+function get-ram {
 
 Write-Host "Ram Information"
 
@@ -106,6 +123,11 @@ $ramInfoList | Format-Table Vendor,Description, Size, BankAndSlot -Autosize
 $ramTotalGB = [int]($ramTotal / 1gb)
 Write-Host "Total RAM Installed: $ramTotalGB GB"
 
+}
+
+get-ram
+
+function get-network {
 
 
 Write-Host " Network Configuration"
@@ -137,6 +159,12 @@ $ipConfigReport = $adapterConfigurations | ForEach-Object {
 
 $ipConfigReport | Format-Table -Autosize
 
+}
+
+get-network 
+
+function get-video {
+
 # Lastly, Video card Info 
 
 $VideoInfoList = @()
@@ -152,3 +180,7 @@ $VideoInfoList += $videoinfo
 }
 
 $videoInfoList | Format-Table Vendor, Description, Resolution -Autosize
+
+} 
+
+Get-video
