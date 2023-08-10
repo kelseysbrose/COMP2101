@@ -1,4 +1,4 @@
-$env:path += ";$home/documents/github/comp2101/powershell"
+$env:path += ";C:\Users\kels_\OneDrive\Documents\GitHub\COMP2101\WindowsPowerShell"
 new-item -path alias:np -value notepad
 
 function welcome {
