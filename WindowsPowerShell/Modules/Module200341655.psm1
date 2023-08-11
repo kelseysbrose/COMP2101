@@ -36,7 +36,7 @@ $OperatingSystem |Format-Table -Autosize
 
 }
 
-get-system
+
 
 
 # Then you want to get the Processor Information: 
@@ -59,7 +59,7 @@ $Processor | ForEach-Object {
 
 }
 
-get-processor
+
 
 # For the Disk Drives 
 
@@ -96,7 +96,7 @@ $diskinfolist
 
 }
 
-get-disks
+
 
 
 ## Now it's the RAM's turn 
@@ -126,7 +126,7 @@ Write-Host "Total RAM Installed: $ramTotalGB GB"
 
 }
 
-get-ram
+
 
 function get-network {
 
@@ -162,7 +162,7 @@ $ipConfigReport | Format-Table -Autosize
 
 }
 
-get-network 
+ 
 
 function get-video {
 
@@ -184,4 +184,4 @@ $videoInfoList | Format-Table Vendor, Description, Resolution -Autosize
 
 } 
 
-Get-video
+
