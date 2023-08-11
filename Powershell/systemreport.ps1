@@ -1,4 +1,4 @@
-parm (
+param (
 	[Switch]$System,
 	[Switch]$Disks,
 	[Switch]$Network
@@ -174,51 +174,47 @@ function get-video {
 
 # Lastly, Video card Info 
 
-$VideoInfoList = @()
-$VideoControllers = Get-WmiObject win32_videoController
-foreach ($video in $videoControllers) {
-	$resolution = "$($video.CurrentHorizontalResolution) x $($video.CurrentVerticalResolution)"
-	$videoInfo = [PSCustomObject] {
-	Vendor = $video.Processor
-	Description = $video.Description
-	Resolution = $resolution
-	}
-$VideoInfoList += $videoinfo
+Write-Host "Video Controller Information"
+
+$videoInfo = Get-WmiObject -Class Win32_videoController | Select-Object -Property Name, Description, CurrentHorizontalResolution, CurrentVerticalResolution, AdapterCompadibility
+$videoCardInfo = foreach ($video in $videoInfo) {
+$resolution = "$($video.CurrentHorizontalResolution) x $($video.CurrentVerticalResolution)"
+"$resolution ($($video.AdapterCompatibility)): $($video.name) - $($video.Description)"
 }
 
-$videoInfoList | Format-Table Vendor, Description, Resolution -Autosize
+return $videocardInfo
 
 } 
 
 # To run specific commands 
 
+$reportSections = @()
+
 if ($system) {
-	'$reportSections' = @(
-	(get-system),
-	(get-ram),
-	(get-video)
-	)
+	$reportSections += get-system
+	$reportSections += get-ram
+	$reportSections += get-video
+	
 }
 
-elseif ($Disks) {
-	'$reportSections' = @(get-disks)
+if ($Disks) {
+	$reportSections += get-disks
 }
 
-elseif ($Network) {
-	'$reportSections' = @(get-network)
+if ($Network) {
+	$reportSections += get-network
 } 
 
-else {
-	'$reportSections' = @(
-	(get-system),
-	(get-processor),
-	(get-disks),
-	(get-ram),
-	(get-network),
-	(get-video)
+if (-not $System -and -not $Disks -and -not $Network) {
+	$reportSections += get-system
+	$reportSections += get-processor
+	$reportSections += get-disks
+	$reportSections += get-ram
+	$reportSections += get-network
+	$reportSections += get-video
 
-  )
+  
 }
 
-$fullReport = $reportSections -join "'r'n"
+$fullReport = $reportSections 
 $fullreport
