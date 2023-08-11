@@ -1,17 +1,5 @@
-$env:path += ";C:\Users\kels_\OneDrive\Documents\GitHub\COMP2101\WindowsPowerShell"
-new-item -path alias:np -value notepad
 
-function welcome {
-	$welcome = "Hello, How are you today"
-}
-
-write-output "$welcome"
-
-function get-mydisks {
-	$diskinfo = Get-Wmiobject win32_DiskDrive | Select-object Manufacturer, Model, SerialNumber, FirmwareRevision, Size
-	$diskinfo | Format-Table -Autosize
-}
-
+#First, Need to gather the information for the table, Hardware Info: 
 
 function get-system {
 
@@ -41,18 +29,19 @@ $systemInfo | Format-Table -Autosize
 # Next, Gathering the Operating System info 
 
 
-
 $OperatingSystem = Get-CIMInstance -Classname Win32_OperatingSystem | Select-Object -Property OperatingSystem,Version
 
 Write-Host "Operating System Information"
 $OperatingSystem |Format-Table -Autosize
 
-
 }
+
+get-system
+
 
 # Then you want to get the Processor Information: 
 
-function processor {
+function get-processor {
 
 $Processor = Get-CimInstance -ClassName win32_processor | Select-Object -Property Description,MaxClockSpeed,NumberOfCores,L1CacheSpeed,L2CacheSpeed,L3CacheSpeed
 
@@ -67,11 +56,14 @@ $Processor | ForEach-Object {
 	}
     }
 }
+
 }
+
+get-processor
 
 # For the Disk Drives 
 
-function DiskDrive {
+function get-disks {
 
 Write-Host "Disk Drive Information" 
 
@@ -101,11 +93,15 @@ $diskInfoList = @()
           
 
 $diskinfolist
+
 }
+
+get-disks
+
 
 ## Now it's the RAM's turn 
 
-function RAM {
+function get-ram {
 
 Write-Host "Ram Information"
 
@@ -130,7 +126,10 @@ Write-Host "Total RAM Installed: $ramTotalGB GB"
 
 }
 
-function network {
+get-ram
+
+function get-network {
+
 
 Write-Host " Network Configuration"
 
@@ -160,9 +159,13 @@ $ipConfigReport = $adapterConfigurations | ForEach-Object {
 # This command is to format the table and autosize it
 
 $ipConfigReport | Format-Table -Autosize
+
 }
 
-function videocard {
+get-network 
+
+function get-video {
+
 # Lastly, Video card Info 
 
 $VideoInfoList = @()
@@ -178,4 +181,7 @@ $VideoInfoList += $videoinfo
 }
 
 $videoInfoList | Format-Table Vendor, Description, Resolution -Autosize
-}
+
+} 
+
+Get-video
