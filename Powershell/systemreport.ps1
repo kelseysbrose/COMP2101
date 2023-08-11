@@ -1,9 +1,20 @@
+# Kelsey Rose 
+# Not a huge fan of Scripting at all 
+
+# Final Script 
+
+
+## This will check if you entered in any Parameters with the Script 
+
+
 param (
 	[Switch]$System,
 	[Switch]$Disks,
 	[Switch]$Network
 )
 
+
+#########################################
 
 #First, Need to gather the information for the table, Hardware Info: 
 
@@ -25,8 +36,10 @@ $systemInfo = [PSCustomObject]@{
 	
 
 
-# Make it have a title 
 
+#############################
+# Make it have a title 
+################################
 Write-Host "Computer Hardware Information" 
 $systemInfo | Format-Table -Autosize
 
@@ -45,8 +58,11 @@ $OperatingSystem |Format-Table -Autosize
 
 
 
+###############
+
 # Then you want to get the Processor Information: 
 
+################
 function get-processor {
 
 $Processor = Get-CimInstance -ClassName win32_processor | Select-Object -Property Description,MaxClockSpeed,NumberOfCores,L1CacheSpeed,L2CacheSpeed,L3CacheSpeed
@@ -66,6 +82,7 @@ $Processor | ForEach-Object {
 }
 
 
+###########################
 
 # For the Disk Drives 
 
@@ -103,7 +120,7 @@ $diskinfolist
 }
 
 
-
+###############################
 
 ## Now it's the RAM's turn 
 
@@ -132,7 +149,9 @@ Write-Host "Total RAM Installed: $ramTotalGB GB"
 
 }
 
+###########################################################
 
+# This will get the network information
 
 function get-network {
 
@@ -168,7 +187,7 @@ $ipConfigReport | Format-Table -Autosize
 
 }
 
-
+#############################################
 
 function get-video {
 
@@ -185,6 +204,12 @@ $resolution = "$($video.CurrentHorizontalResolution) x $($video.CurrentVerticalR
 return $videocardInfo
 
 } 
+
+
+#####################
+
+# This will make it so you can ask for certain paramiters
+
 
 # To run specific commands 
 
@@ -218,3 +243,10 @@ if (-not $System -and -not $Disks -and -not $Network) {
 
 $fullReport = $reportSections 
 $fullreport
+
+
+
+
+######################
+
+# End of report 
