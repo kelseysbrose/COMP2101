@@ -73,7 +73,7 @@ $Processor | Format-Table -Autosize
 
 $Processor | ForEach-Object {
 	$_.PSObject.Properties | ForEach-Object {
-		if ($_.Value -eq "Null") {
+		if ($_.Value -eq $null) {
 			$_.Value = "N/A"
 	}
     }
