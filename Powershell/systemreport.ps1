@@ -20,8 +20,7 @@ param (
 #############################
 # Make it have a title 
 ################################
-Write-Output "Computer Hardware Information" 
-$systemInfo | Format-Table -Autosize
+
 
 
 function get-system {
@@ -39,7 +38,10 @@ $systemInfo = [PSCustomObject]@{
 #This makes it so the information showed is in GB, making it easier to read
 	Domain = $ComputerHardware.Domain
   }
-	
+	Write-Output "Computer Hardware Information" 
+$systemInfo | Format-Table -Autosize
+
+
 $systemInfo | ForEach-Object {
 	$_.PSObject.Properties | ForEach-Object {
 		if ($_.Value -eq $null) {
