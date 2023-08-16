@@ -17,6 +17,12 @@ param (
 #########################################
 
 #First, Need to gather the information for the table, Hardware Info: 
+#############################
+# Make it have a title 
+################################
+Write-Output "Computer Hardware Information" 
+$systemInfo | Format-Table -Autosize
+
 
 function get-system {
 
@@ -34,27 +40,32 @@ $systemInfo = [PSCustomObject]@{
 	Domain = $ComputerHardware.Domain
   }
 	
+$systemInfo | ForEach-Object {
+	$_.PSObject.Properties | ForEach-Object {
+		if ($_.Value -eq $null) {
+			$_.Value = "N/A"
+	}
+    }
+}
 
 
-
-#############################
-# Make it have a title 
-################################
-Write-Host "Computer Hardware Information" 
-$systemInfo | Format-Table -Autosize
+}
 
 
 
 # Next, Gathering the Operating System info 
 
 
-$OperatingSystem = Get-CIMInstance -Classname Win32_OperatingSystem | Select-Object -Property OperatingSystem,Version
+function get-operating {
 
-Write-Host "Operating System Information"
+Write-Output "Operating System Information"
 $OperatingSystem |Format-Table -Autosize
 
-}
+$OperatingSystem = Get-CIMInstance -Classname Win32_OperatingSystem | Select-Object -Property OperatingSystem,Version
 
+
+
+}
 
 
 
@@ -65,10 +76,9 @@ $OperatingSystem |Format-Table -Autosize
 ################
 function get-processor {
 
-$Processor = Get-CimInstance -ClassName win32_processor | Select-Object -Property Description,MaxClockSpeed,NumberOfCores,L1CacheSpeed,L2CacheSpeed,L3CacheSpeed
 
-Write-Host "Processor Information"
-$Processor | Format-Table -Autosize
+
+$Processor = Get-CimInstance -ClassName win32_processor | Select-Object -Property Description,MaxClockSpeed,NumberOfCores,L1CacheSpeed,L2CacheSpeed,L3CacheSpeed
 
 
 $Processor | ForEach-Object {
@@ -78,6 +88,8 @@ $Processor | ForEach-Object {
 	}
     }
 }
+Write-Output "Processor Information:"
+$Processor | Format-Table -Autosize
 
 }
 
@@ -88,7 +100,7 @@ $Processor | ForEach-Object {
 
 function get-disks {
 
-Write-Host "Disk Drive Information" 
+Write-Output "Disk Drive Information:" 
 
 
 $diskdrives = Get-CIMInstance CIM_diskdrive
@@ -109,7 +121,13 @@ $diskInfoList = @()
 			"UsedSpace(%)" = [math]::Round($usedSpacePercentage, 2)
 	}
 		$diskinfolist += $diskinfo
-                                                               
+$diskInfo | ForEach-Object {
+	$_.PSObject.Properties | ForEach-Object {
+		if ($_.Value -eq $null) {
+			$_.Value = "N/A"
+	}
+    }
+}                                
            }
       }
   }
@@ -126,7 +144,7 @@ $diskinfolist
 
 function get-ram {
 
-Write-Host "Ram Information"
+Write-Output "Ram Information:"
 
 $ramInfoList = @()
 $ramTotal = 0
@@ -145,7 +163,16 @@ $ramInfoList | Format-Table Vendor,Description, Size, BankAndSlot -Autosize
 
 # Total Installed Ram 
 $ramTotalGB = [int]($ramTotal / 1gb)
-Write-Host "Total RAM Installed: $ramTotalGB GB"
+Write-Output "Total RAM Installed: $ramTotalGB GB"
+
+$ramInfoList | ForEach-Object {
+	$_.PSObject.Properties | ForEach-Object {
+		if ($_.Value -eq $null) {
+			$_.Value = "N/A"
+	}
+    }
+}
+
 
 }
 
@@ -156,7 +183,7 @@ Write-Host "Total RAM Installed: $ramTotalGB GB"
 function get-network {
 
 
-Write-Host " Network Configuration"
+Write-Output " Network Configuration:"
 
 # This script will make a table for the ipconfig information that is enabled. 
 
@@ -187,13 +214,14 @@ $ipConfigReport | Format-Table -Autosize
 
 }
 
+
 #############################################
 
 function get-video {
 
 # Lastly, Video card Info 
 
-Write-Host "Video Controller Information"
+Write-Output "Video Controller Information"
 
 $videoInfo = Get-WmiObject -Class Win32_videoController | Select-Object -Property Name, Description, CurrentHorizontalResolution, CurrentVerticalResolution, AdapterCompadibility
 $videoCardInfo = foreach ($video in $videoInfo) {
@@ -217,6 +245,7 @@ $reportSections = @()
 
 if ($system) {
 	$reportSections += get-system
+	$reportSections += get-operating
 	$reportSections += get-ram
 	$reportSections += get-video
 	
@@ -232,6 +261,7 @@ if ($Network) {
 
 if (-not $System -and -not $Disks -and -not $Network) {
 	$reportSections += get-system
+	$reportSections += get-operating
 	$reportSections += get-processor
 	$reportSections += get-disks
 	$reportSections += get-ram
