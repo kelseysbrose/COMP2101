@@ -10,6 +10,8 @@ fi
 mydate=$(date)
 computermodel="$(lshw -class system| grep description: | sed 's/ *description: *//')"
 cpumodel="$(lscpu | grep 'Model name:' | sed 's/ *Model name: *//')"
+hostname -I | awk '{gsub(/^127\./, ""); print}'
+
 
 source /etc/os-release
 
@@ -17,6 +19,9 @@ source /etc/os-release
 
 cat <<EOF
 System Report produced by $USER on $mydate
+
+Report For My system:
+=========================
  
 System Description
 ------------------
@@ -30,4 +35,15 @@ Operating System
 ----------------
 OS: $PRETTY_NAME
 
+IP Address
+----------------
+hostname -I | awk '{gsub(/^127\./, ""); print}'
+
+Disk File Space
+------------------
+df -h / | awk 'NR==2 {print $4}'
+
+
+
+=======================================
 EOF
